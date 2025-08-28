@@ -24,8 +24,8 @@ data "archive_file" "lambda_zip" {
 
 # Déploiement de la fonction Lambda avec layers dynamiques
 resource "aws_lambda_function" "hubspot-pdf-ocr-processor" {
-  function_name = " hubspot-pdf-ocr-processor"
-  handler       = " hubspot-pdf-ocr-processor.lambda_handler"
+  function_name = "hubspot-pdf-ocr-processor"
+  handler       = "hubspot-pdf-ocr-processor.lambda_handler"
   runtime       = "python3.9"
   role          = "arn:aws:iam::975515885951:role/lambda"
   filename         = data.archive_file.lambda_zip.output_path
