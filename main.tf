@@ -46,7 +46,7 @@ resource "aws_lambda_function" "cnfce_store_db" {
   layers = [
     data.aws_lambda_layer_version.mistralai.arn,
     data.aws_lambda_layer_version.pdf2image.arn,
-    data.aws_lambda_layer_version.python_dotenv.arn
+    data.aws_lambda_layer_version.python-dotenv.arn
   ]
 }
 
