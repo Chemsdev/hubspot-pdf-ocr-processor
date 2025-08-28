@@ -23,12 +23,11 @@ data "archive_file" "lambda_zip" {
 }
 
 # Déploiement de la fonction Lambda avec layers dynamiques
-resource "aws_lambda_function" "cnfce_store_db" {
-  function_name = "cnfce_store_db"
-  handler       = "cnfce_store_db.lambda_handler"
-  runtime       = "python3.8"
-  role          = "arn:aws:iam::115083608235:role/lambda-s3-role"
-
+resource "aws_lambda_function" "hubspot-pdf-ocr-processor" {
+  function_name = " hubspot-pdf-ocr-processor"
+  handler       = " hubspot-pdf-ocr-processor.lambda_handler"
+  runtime       = "python3.9"
+  role          = "arn:aws:iam::975515885951:role/lambda"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 

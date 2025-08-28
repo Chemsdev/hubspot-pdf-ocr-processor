@@ -31,18 +31,18 @@ jobs:
       - name: 🌍 Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.6.6' # version récente et stable
-
+          terraform_version: '1.6.6' 
+          
       - name: 🚀 Terraform Init
         run: terraform init
 
       - name: 🔍 Import Lambda si elle existe
         run: |
           set -e
-          LAMBDA_NAME="hubspot-get-pdf-of-day"
+          LAMBDA_NAME="hubspot-pdf-ocr-processor"
           if aws lambda get-function --function-name "$LAMBDA_NAME" > /dev/null 2>&1; then
             echo "✅ Lambda déjà existante, import dans l'état Terraform..."
-            terraform import aws_lambda_function.hubspot-get-pdf-of-day "$LAMBDA_NAME" || true
+            terraform import aws_lambda_function.hubspot-pdf-ocr-processor "$LAMBDA_NAME" || true
           else
             echo "ℹ️ Lambda inexistante, elle sera créée par Terraform."
           fi
