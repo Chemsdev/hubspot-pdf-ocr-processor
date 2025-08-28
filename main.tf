@@ -4,7 +4,7 @@ provider "aws" {
 
 # Récupération dynamique des dernières versions des layers existants
 data "aws_lambda_layer_version" "python-dotenv" {
-  layer_name = "cnfce_python-dotenv"
+  layer_name = "python-dotenv"
 }
 
 data "aws_lambda_layer_version" "mistralai" {
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "cnfce_store_db" {
   # Variables de la base de données.
   environment {
     variables = {
-      DB_HOST     = var.mistral_api_key
+      DB_HOST = var.mistral_api_key
     }
   }
 
@@ -45,7 +45,7 @@ resource "aws_lambda_function" "cnfce_store_db" {
   layers = [
     data.aws_lambda_layer_version.mistralai.arn,
     data.aws_lambda_layer_version.pdf2image.arn,
-    data.aws_lambda_layer_version.python_dotenv.arn,
+    data.aws_lambda_layer_version.python_dotenv.arn
   ]
 }
 

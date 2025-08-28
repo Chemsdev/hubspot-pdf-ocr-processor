@@ -7,7 +7,6 @@ import json
 import logging
 import os
 from datetime import datetime
-from typing import Dict, Any
 from mistralai import Mistral
 
 # Setup logging for AWS Lambda

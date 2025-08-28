@@ -50,13 +50,13 @@ jobs:
       - name: 🔎 Terraform Plan
         env:
           TF_VAR_MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: terraform plan -var="MISTRAL_API_KEY=$MISTRAL_API_KEY"
+        run: terraform plan 
 
       - name: 📦 Terraform Apply
         env:
           TF_LOG: DEBUG
           TF_VAR_MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: terraform apply -auto-approve -var="MISTRAL_API_KEY=$MISTRAL_API_KEY"
+        run: terraform apply -auto-approve 
 
 
 
