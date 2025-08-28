@@ -55,6 +55,7 @@ jobs:
       - name: 📦 Terraform Apply
         env:
           TF_LOG: DEBUG
+          env:
           TF_VAR_MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: terraform apply -auto-approve 
 

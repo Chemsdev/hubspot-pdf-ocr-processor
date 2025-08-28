@@ -35,11 +35,12 @@ resource "aws_lambda_function" "cnfce_store_db" {
   timeout = 900
 
   # Variables de la base de données.
-  environment {
+    environment {
     variables = {
-      DB_HOST = var.mistral_api_key
+        MISTRAL_API_KEY = var.mistral_api_key
     }
-  }
+    }
+
 
   # Layers de la Lambda.   
   layers = [
