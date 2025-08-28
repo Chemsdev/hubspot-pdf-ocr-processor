@@ -1,1 +1,0 @@
-# hubspot-pdf-ocr-processor
