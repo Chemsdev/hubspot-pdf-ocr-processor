@@ -23,30 +23,27 @@ data "archive_file" "lambda_zip" {
 }
 
 # Déploiement de la fonction Lambda avec layers dynamiques
-resource "aws_lambda_function" "hubspot-pdf-ocr-processor" {
-  function_name = "hubspot-pdf-ocr-processor"
-  handler       = "hubspot-pdf-ocr-processor.lambda_handler"
-  runtime       = "python3.9"
-  role          = "arn:aws:iam::975515885951:role/lambda"
+resource "aws_lambda_function" "hubspot_pdf_ocr_processor" {
+  function_name    = "hubspot-pdf-ocr-processor"
+  handler          = "hubspot_pdf_ocr_processor.lambda_handler"
+  runtime          = "python3.9"
+  role             = "arn:aws:iam::975515885951:role/lambda"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  timeout          = 900
 
-  timeout = 900
-
-  # Variables de la base de données.
-    environment {
+  environment {
     variables = {
-        MISTRAL_API_KEY = var.mistral_api_key
+      MISTRAL_API_KEY = var.mistral_api_key
     }
-    }
+  }
 
-
-  # Layers de la Lambda.   
-  layers = [
-    data.aws_lambda_layer_version.mistralai.arn,
-    data.aws_lambda_layer_version.pdf2image.arn,
-    data.aws_lambda_layer_version.python-dotenv.arn
-  ]
+    # Layers de la Lambda.   
+    layers = [
+        data.aws_lambda_layer_version.mistralai.arn,
+        data.aws_lambda_layer_version.pdf2image.arn,
+        data.aws_lambda_layer_version.python-dotenv.arn
+    ]
 }
 
 
