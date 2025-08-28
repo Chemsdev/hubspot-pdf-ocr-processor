@@ -42,7 +42,7 @@ jobs:
           LAMBDA_NAME="hubspot-pdf-ocr-processor"
           if aws lambda get-function --function-name "$LAMBDA_NAME" > /dev/null 2>&1; then
             echo "✅ Lambda déjà existante, import dans l'état Terraform..."
-            terraform import aws_lambda_function.hubspot-pdf-ocr-processor "$LAMBDA_NAME" || true
+            terraform import aws_lambda_function.hubspot_pdf_ocr_processor "$LAMBDA_NAME" || true
           else
             echo "ℹ️ Lambda inexistante, elle sera créée par Terraform."
           fi
