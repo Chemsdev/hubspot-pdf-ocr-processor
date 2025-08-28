@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-north-1"
+  region = "eu-central-1"
 }
 
 # Récupération dynamique des dernières versions des layers existants
