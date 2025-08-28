@@ -31,7 +31,7 @@ jobs:
       - name: 🌍 Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.12.2'
+          terraform_version: '1.6.6' # version récente et stable
 
       - name: 🚀 Terraform Init
         run: terraform init
@@ -49,18 +49,11 @@ jobs:
 
       - name: 🔎 Terraform Plan
         env:
-          TF_VAR_MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: terraform plan 
+          TF_VAR_mistral_api_key: ${{ secrets.MISTRAL_API_KEY }}
+        run: terraform plan
 
       - name: 📦 Terraform Apply
         env:
           TF_LOG: DEBUG
-          env:
-          TF_VAR_MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: terraform apply -auto-approve 
-
-
-
-        
-
-        
+          TF_VAR_mistral_api_key: ${{ secrets.MISTRAL_API_KEY }}
+        run: terraform apply -auto-approve
