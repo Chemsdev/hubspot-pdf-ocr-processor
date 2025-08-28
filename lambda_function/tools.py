@@ -14,6 +14,22 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
+# Fonction permettent de récupérer le dernier PDF.
+def get_last_pdf(s3_client, bucket, prefix="PDF/"):
+    """
+    Récupère le fichier PDF le plus récent dans le dossier S3 PDF/.
+    """
+    response = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix)
+
+    if "Contents" not in response:
+        raise FileNotFoundError(f"Aucun fichier trouvé dans {prefix}")
+
+    # Trier les fichiers par date de modification décroissante
+    sorted_files = sorted(response["Contents"], key=lambda x: x["LastModified"], reverse=True)
+
+    # Récupérer le dernier fichier (le plus récent)
+    last_pdf_key = sorted_files[0]["Key"]
+    return last_pdf_key
 
 
 def extract_text_fallback(pdf_data: bytes) -> str:
