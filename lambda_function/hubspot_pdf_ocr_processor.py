@@ -19,6 +19,7 @@ def lambda_handler(event, context):
         logger.info("Lambda function started")
         
         # Validate environment variables
+        load_dotenv()
         mistral_api_key = os.getenv("MISTRAL_API_KEY")
         if not mistral_api_key:
             raise ValueError("MISTRAL_API_KEY environment variable is required")
@@ -59,3 +60,5 @@ def lambda_handler(event, context):
                 'processing_status': 'failed'
             })
         }
+        
+        
