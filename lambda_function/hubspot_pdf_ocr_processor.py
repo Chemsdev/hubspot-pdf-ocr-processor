@@ -60,5 +60,3 @@ def lambda_handler(event, context):
                 'processing_status': 'failed'
             })
         }
-        
-        
