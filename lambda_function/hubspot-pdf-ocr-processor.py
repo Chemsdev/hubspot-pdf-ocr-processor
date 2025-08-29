@@ -32,7 +32,7 @@ def lambda_handler(event, context):
         s3_client = aws_conn["client"]
         
         # 📄 Récupérer le dernier PDF dans le dossier PDF/.
-        pdf_key = get_last_pdf(s3_client, bucket_name, prefix="PDF/")
+        pdf_key = get_last_pdf(s3_client, bucket_name, prefix="PDF_TEST/")
         print(f"📄 Dernier PDF trouvé : {pdf_key}")
         
         # Lancement de l'OCR.
