@@ -31,21 +31,29 @@ jobs:
       - name: 🌍 Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.6.6' 
+          terraform_version: '1.6.6'
 
       - name: 🚀 Terraform Init
         run: terraform init
 
       - name: 🔍 Import Lambda si elle existe
+        env:
+          TF_VAR_mistral_api_key: ${{ secrets.MISTRAL_API_KEY }}
         run: |
           set -e
           LAMBDA_NAME="hubspot-pdf-ocr-processor"
+          # Créer un fichier temporaire .tfvars avec la variable Mistral
+          echo "mistral_api_key = \"${TF_VAR_mistral_api_key}\"" > temp.tfvars
+
           if aws lambda get-function --function-name "$LAMBDA_NAME" > /dev/null 2>&1; then
             echo "✅ Lambda déjà existante, import dans l'état Terraform..."
-            terraform import aws_lambda_function.hubspot_pdf_ocr_processor "$LAMBDA_NAME" || true
+            terraform import -var-file=temp.tfvars aws_lambda_function.hubspot_pdf_ocr_processor "$LAMBDA_NAME" || true
           else
             echo "ℹ️ Lambda inexistante, elle sera créée par Terraform."
           fi
+
+          # Supprimer le fichier temporaire
+          rm temp.tfvars
 
       - name: 🔎 Terraform Plan
         env:
