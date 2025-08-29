@@ -11,8 +11,8 @@ data "aws_lambda_layer_version" "mistralai" {
   layer_name = "mistralai"
 }
 
-data "aws_lambda_layer_version" "pdf2image" {
-  layer_name = "pdf2image"
+data "aws_lambda_layer_version" "PyPDF2" {
+  layer_name = "PyPDF2"
 }
 
 # Création du fichier ZIP de la fonction Lambda
@@ -41,7 +41,7 @@ resource "aws_lambda_function" "hubspot_pdf_ocr_processor" {
     # Layers de la Lambda.   
     layers = [
         data.aws_lambda_layer_version.mistralai.arn,
-        data.aws_lambda_layer_version.pdf2image.arn,
+        data.aws_lambda_layer_version.PyPDF2.arn,
         data.aws_lambda_layer_version.python-dotenv.arn
     ]
 }
