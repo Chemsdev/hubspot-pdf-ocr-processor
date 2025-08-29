@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 
 
-AWS_CONNEXION_DATALO = [
+AWS_CONNEXION_CHEMS = [
     "ACCESS_KEY_ID_CHEMS",   
     "SECRET_ACCESS_KEY_CHEMS",
     "REGION_CHEMS"      
@@ -25,7 +25,7 @@ AWS_CONNEXION_DATALO = [
 
 
 # Fonction permettent de se connecter à AWS. 
-def connexion_aws(liste_connexion=AWS_CONNEXION_DATALO):
+def connexion_aws(liste_connexion=AWS_CONNEXION_CHEMS):
     try:
         load_dotenv()
         s3_client = boto3.client(
