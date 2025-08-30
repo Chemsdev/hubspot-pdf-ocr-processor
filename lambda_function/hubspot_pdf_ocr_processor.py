@@ -13,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def lambda_handler():
+def lambda_handler(event, context):
     """
     Handler AWS Lambda pour le traitement des fichiers PDF avec Mistral OCR.
     """
@@ -135,12 +135,5 @@ def lambda_handler():
             })
         }
         # ----------------------------------------------------------->
-
-
-
-        
-        
-        
-lambda_handler()
 
 
