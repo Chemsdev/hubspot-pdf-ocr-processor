@@ -24,6 +24,8 @@ AWS_CONNEXION_CHEMS = [
 ]
 
 
+# ---------------------------------------------------------------------------------------------
+
 # Fonction permettent de se connecter à AWS. 
 def connexion_aws(liste_connexion=AWS_CONNEXION_CHEMS):
     try:
@@ -54,7 +56,7 @@ def connexion_aws(liste_connexion=AWS_CONNEXION_CHEMS):
             "client"  : None
         }
 
-
+# ---------------------------------------------------------------------------------------------
 
 # Création d'un fichier texte contenant la sortie OCR.
 def save_file_OCR(s3_client, response: dict, bucket_name:str):
@@ -69,20 +71,14 @@ def save_file_OCR(s3_client, response: dict, bucket_name:str):
     """
     try:
         
-        # Récupération des informations de l'OCR.
-        response_body = response["body"]
-        response_dict = json.loads(response_body)
-        
         # Extraire le texte OCR depuis la réponse
-        texte_ocr = response_dict.get("texte_OCR", "")
-        if not texte_ocr:
-            logger.warning("Aucun texte OCR trouvé dans la réponse")
-            texte_ocr = "Aucun texte extrait"
+        texte_ocr = response.get("texte_OCR", "")
+        
 
         # Extraire le nom de base du PDF (ex: "4430_0" à partir de "PDF/4430_0.pdf")
-        object_key      = response_dict.get("object_key", "")
+        object_key      = response.get("object_key", "")
         base_name       = os.path.basename(object_key).replace(".pdf", "")
-        output_filename = f"OCR_{base_name}.txt"
+        output_filename = f"OCR_[{base_name}].txt"
         s3_output_key   = f"PDF_OCR/{output_filename}"
 
         # Upload du contenu OCR vers S3
@@ -109,6 +105,7 @@ def save_file_OCR(s3_client, response: dict, bucket_name:str):
             "message": error_message
         }
 
+# ---------------------------------------------------------------------------------------------
 
 # Fonction permettent de récupérer le dernier PDF.
 def get_last_pdf(s3_client, bucket, prefix="PDF/"):
@@ -127,6 +124,8 @@ def get_last_pdf(s3_client, bucket, prefix="PDF/"):
     last_pdf_key = sorted_files[0]["Key"]
     return last_pdf_key
 
+
+# ---------------------------------------------------------------------------------------------
 
 def extract_text_fallback(pdf_data: bytes) -> str:
     """
@@ -161,6 +160,8 @@ def extract_text_fallback(pdf_data: bytes) -> str:
         logger.error(f"Fallback text extraction failed: {e}")
         return f"Text extraction failed: {str(e)}"
 
+
+# ---------------------------------------------------------------------------------------------
 
 def extract_text_with_mistral_ocr(pdf_data: bytes, api_key: str) -> str:
     """
@@ -225,6 +226,10 @@ def extract_text_with_mistral_ocr(pdf_data: bytes, api_key: str) -> str:
         return extract_text_fallback(pdf_data)
 
 
+
+# ---------------------------------------------------------------------------------------------
+
+# Fonction permettent de réaliser l'OCR avec Mistral.
 def process_s3_file(s3_client, bucket_name: str, object_key: str, mistral_api_key: str) -> Dict[str, Any]:
     """
     Traite un fichier PDF spécifique dans S3 et extrait son contenu via Mistral OCR.
@@ -328,4 +333,27 @@ def process_s3_file(s3_client, bucket_name: str, object_key: str, mistral_api_ke
     }
 
 
+# ---------------------------------------------------------------------------------------------
 
+# Fonction permettent d'enregistrer le logging du processus dans le S3.
+def save_log_to_s3(s3_client, bucket_name:str, log_data:dict, file_name:str):
+    """
+    Sauvegarde un log JSON dans S3 (succès ou erreur).
+    """
+    file_name=file_name.replace(".pdf","")
+    try:
+        if s3_client:
+            log_key = f"LOGS/log_[{file_name}].json"
+            s3_client.put_object(
+                Bucket=bucket_name,
+                Key=log_key,
+                Body=json.dumps(log_data, indent=2),
+                ContentType="application/json"
+            )
+            print(f"📝 Log sauvegardé dans s3://{bucket_name}/{log_key}")
+        else:
+            print("⚠️ Impossible de sauvegarder le log dans S3 (s3_client non initialisé).")
+    except Exception as e:
+        print(f"⚠️ Erreur lors de l'écriture du log dans S3 : {e}")
+
+# ---------------------------------------------------------------------------------------------
