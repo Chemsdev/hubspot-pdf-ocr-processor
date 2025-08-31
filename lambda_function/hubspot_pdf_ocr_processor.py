@@ -28,10 +28,13 @@ def lambda_handler(event, context):
         "workflow": {
             "OCR":  {"status": "Not started", "details": "", "data": {}},
             "LLM":  {"status": "Not started", "details": "", "data": {}},
-            "DEAL": {"status": "Not started", "details": "", "data": {
-                "dealname": "",
-                "id_deal": ""
-            }},
+            "DEAL": {"status": "Not started", "details": "", 
+                     
+                "transaction": {"dealname": "","id_deal": ""},
+                "matching_company":{},
+                "matching_products":{}
+            
+            },
         },
 
     }      
