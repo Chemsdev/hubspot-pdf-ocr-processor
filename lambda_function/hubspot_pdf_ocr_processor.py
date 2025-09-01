@@ -26,6 +26,7 @@ def lambda_handler(event, context):
             "created_at": datetime.utcnow().isoformat() + "Z",
         },
         "workflow": {
+            
             "OCR":  {"status": "Not started", "details": "", "data": {}},
             "LLM":  {"status": "Not started", "details": "", "data": {}},
             "DEAL": {"status": "Not started", "details": "", 
@@ -33,7 +34,6 @@ def lambda_handler(event, context):
                 "transaction": {"dealname": "","id_deal": ""},
                 "matching_company":{},
                 "matching_products":{}
-            
             },
         },
 
@@ -64,7 +64,7 @@ def lambda_handler(event, context):
         pdf_key = get_last_pdf(s3_client, bucket_name, prefix="PDF_TEST/")
         print(f"📄 Dernier PDF trouvé : {pdf_key}")
 
-        # (6) Enregistrement du nom du fichier PDF.
+        # (6) Enregistrement du nom du fichier PDF dans le logging.
         file_name = pdf_key.replace("PDF_TEST/","")
         log_data["metadata"]["file_name"] = file_name
 
@@ -81,13 +81,17 @@ def lambda_handler(event, context):
         if ocr_response.get("processing_status") == "success":
             texte_ocr = ocr_response.get("texte_OCR", "")
             if not texte_ocr:
+                
                 # ----------------------------------------------------------->
                 # (8.1) Logging d’erreur si aucun texte n’a été extrait.
                 log_data["workflow"]["OCR"]["status"]  = "Failed"
                 log_data["workflow"]["OCR"]["details"] = "Aucun texte extrait"
                 logger.warning("Aucun texte OCR trouvé dans la réponse")
+                return {"statusCode": 404,"body": json.dumps({"status": "failed","message": "Aucun texte extrait"})}
                 # ----------------------------------------------------------->
+                
             else:
+                
                 # ----------------------------------------------------------->
                 # (8.2) Logging de succès si texte trouvé.
                 log_data["workflow"]["OCR"]["status"]  = "Success"
@@ -97,15 +101,17 @@ def lambda_handler(event, context):
                 logger.info(f"Successfully processed PDF: {ocr_response}")
                 # ----------------------------------------------------------->
         else:
+            
             # ----------------------------------------------------------->
             # (8.3) Logging d’échec si OCR en erreur.
             log_data["workflow"]["OCR"]["status"]  = "Failed"
             log_data["workflow"]["OCR"]["details"] = ocr_response["message"]
             logger.error(f"OCR failed: {ocr_response}")
+            return {"statusCode": 404,"body": json.dumps({"status": "failed","message":ocr_response["message"]})}
             # ----------------------------------------------------------->
 
         # ----------------------------------------------------------->
-        # (9) Sauvegarde du log JSON dans S3 + résultat OCR.
+        # (9) Sauvegarde du log JSON dans S3 & résultat OCR.
         save_log_to_s3(s3_client=s3_client, bucket_name=bucket_name, log_data=log_data, file_name=file_name)
         save_file_OCR(s3_client=s3_client, response=ocr_response, bucket_name=bucket_name)
         # ----------------------------------------------------------->
@@ -121,11 +127,12 @@ def lambda_handler(event, context):
 
     except Exception as e:
         # ----------------------------------------------------------->
-        # (11) Gestion d’erreur + sauvegarde du log en cas d’exception.
+        # (11) Gestion d’erreur.
         log_data["workflow"]["OCR"]["status"]  = "Failed"
         log_data["workflow"]["OCR"]["details"] = str(e)
         logger.error(f"Error processing PDF: {str(e)}", exc_info=True)
 
+        # sauvegarde du log en cas d’exception.
         s3_client = locals().get("s3_client", None)
         save_log_to_s3(s3_client=s3_client, bucket_name=bucket_name, log_data=log_data, file_name=file_name)
 
@@ -138,5 +145,3 @@ def lambda_handler(event, context):
             })
         }
         # ----------------------------------------------------------->
-
-
